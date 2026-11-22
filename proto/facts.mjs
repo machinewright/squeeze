@@ -1,6 +1,6 @@
 // Print each level's exact answer and its minimum certificates, with on-screen names.
 import { LEVELS } from '../src/levels.js';
-import { konigCover, maxMatching, uncovered, maxFlow, reachable, minStacks, isMisfitSet, gridGraph } from '../src/core.js';
+import { maxMatchingGeneral, hubBound, groupsWithout, konigCover, maxMatching, uncovered, maxFlow, reachable, minStacks, isMisfitSet, gridGraph } from '../src/core.js';
 import { orderRows } from '../src/views/pairs.js';
 const only = process.argv[2];
 function subsets(items, k, f) { const go = (i, s) => { if (s.length === k) return f(s.slice()); if (items.length - i < k - s.length) return; s.push(items[i]); go(i + 1, s); s.pop(); go(i + 1, s); }; go(0, []); }
@@ -26,6 +26,12 @@ LEVELS.forEach((lv, li) => {
     const nm = v => v === 0 ? 'IN' : v === n - 1 ? 'OUT' : String.fromCharCode(64 + v);
     for (let m = 0; m < 1 << lv.edges.length; m++) { const c = []; let cap = 0; lv.edges.forEach((e, i) => { if (m >> i & 1) { c.push(i); cap += e[2]; } }); if (cap === value && !reachable(n, lv.edges, 0, c)[n - 1] && c.every(i => reachable(n, lv.edges, 0, c.filter(j => j !== i))[n - 1])) cuts.push(c.map(i => nm(lv.edges[i][0]) + nm(lv.edges[i][1])).join(',')); }
     line += `max ${value}, trivial ${lv.trivial.value}; min cuts: ${cuts.join(' | ')}`;
+  } else if (lv.kind === 'hubs') {
+    const n = lv.pos.length, m = maxMatchingGeneral(n, lv.edges), nm = v => String.fromCharCode(65 + v), best = [];
+    let bk = 99;
+    for (let s = 1; s < 1 << n; s++) { const h = []; for (let i = 0; i < n; i++) if (s >> i & 1) h.push(i); if (hubBound(n, lv.edges, h) === m && h.length <= bk) { if (h.length < bk) best.length = 0; bk = h.length; best.push(h.map(nm).join('') + ':' + groupsWithout(n, lv.edges, h).map(g => g.map(nm).join('')).join('/')); } }
+    let cov = 99; for (let s = 0; s < 1 << n; s++) { const c = []; for (let i = 0; i < n; i++) if (s >> i & 1) c.push(i); if (c.length < cov && !uncovered(lv.edges, c).length) cov = c.length; }
+    line += `max ${m}, trivial ${lv.trivial.value}, smallest cover ${cov}; smallest hub sets: ${best.join(' | ')}`;
   } else {
     const k = minStacks(lv.boxes), anti = [];
     subsets([...Array(lv.boxes.length).keys()], k, s => { if (isMisfitSet(lv.boxes, s)) anti.push(s.map(i => String.fromCharCode(65 + i)).join('')); });

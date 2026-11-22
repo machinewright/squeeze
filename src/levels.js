@@ -30,6 +30,14 @@ const BOXES = {
   howBound: 'Mark boxes so that <b>no marked box fits inside another marked box</b>. No two of them can share a stack, so you need at least as many stacks as marks.',
 };
 
+const HUBS = {
+  unit: ['pair', 'pairs'], sense: 'max', kind: 'hubs',
+  question: 'How many pairs can dance at once?',
+  labels: { build: 'Make pairs', bound: 'Prove: at most…' },
+  howBuild: 'Click a line to pair those two people; click it again to undo. There are no rows now: anyone may dance with anyone they\'re joined to.',
+  howBound: 'Click people to make them <b>hubs</b>. Without the hubs, everyone else falls into separate groups. A group with an odd number of people can\'t pair up among themselves: someone is left over, and could only dance with a hub. Each hub takes at most one of them.',
+};
+
 /** Layered positions for pipe networks: IN, then each layer top to bottom, then OUT. */
 function layered(layers) {
   const L = layers.length + 2, pos = [[0, 0.5]];
@@ -128,10 +136,33 @@ const RAW = [
     why: 'Every stack climbs up and to the right; every staircase of marks goes down and to the right. A stack can use at most one step of the staircase.' },
 ];
 
+RAW.push(
+  // ---- Without rows (Tutte-Berge: most pairs = best hub bound)
+  { ...HUBS, id: 'h1', chapter: 'Without rows', title: 'Three triangles',
+    setup: 'The last chapter goes back to dancing, but without rows. Marking people who touch every line would still be a proof, but here it can\'t reach the answer. Try the new proof: hubs.',
+    pos: [[0.5, 0.56], [0.5, 0.27], [0.33, 0], [0.67, 0], [0.3, 0.72], [0, 0.6], [0.1, 1], [0.7, 0.72], [1, 0.6], [0.9, 1]],
+    edges: [[0, 1], [1, 2], [1, 3], [2, 3], [0, 4], [4, 5], [4, 6], [5, 6], [0, 7], [7, 8], [7, 9], [8, 9]],
+    hint: 'What happens to the three triangles if A is a hub?',
+    why: 'Take A out and three triangles are left. Each has an odd number of people, so each leaves someone over, and A can rescue only one of them: 2 of the 10 people sit out, so at most 4 pairs. Marking people who touch every line would have needed 6 marks: a triangle needs two marks but holds only one pair.' },
+  { ...HUBS, id: 'h2', chapter: 'Without rows', title: 'Two hubs',
+    setup: 'Sometimes one hub isn\'t enough.',
+    pos: [[0.33, 0.45], [0.67, 0.45], [0.17, 0.28], [0, 0.04], [0.3, 0], [0.4, 0.78], [0.6, 0.78], [0.5, 1], [0.5, 0.17], [0.5, 0.5], [0.85, 0.2], [1, 0.5]],
+    edges: [[0, 2], [2, 3], [3, 4], [2, 4], [0, 5], [5, 6], [6, 7], [5, 7], [1, 6], [0, 8], [1, 8], [0, 9], [1, 9], [1, 10], [1, 11], [10, 11]],
+    hint: 'Count the groups you get when both A and B are hubs, and how many of them are odd.',
+    why: 'With A and B as hubs there are four odd groups: two triangles and two people on their own (the pair at the right is even, so it doesn\'t count). Two hubs rescue two of them, so 2 people sit out: at most 5 pairs.' },
+  { ...HUBS, id: 'h3', chapter: 'Without rows', title: 'The last dance',
+    setup: 'Twelve people. The proof is out there: Tutte and Berge showed that the best choice of hubs always meets the most pairs.',
+    pos: [[0.35, 0.22], [0.8, 1], [0.1, 0.12], [0.6, 0.92], [1, 0.88], [0.2, 0.52], [0.45, 0.4], [0, 0.45], [0.55, 0.6], [0.86, 0.2], [0.86, 0.58], [0.64, 0.36]],
+    edges: [[0, 2], [0, 6], [0, 9], [0, 11], [1, 3], [1, 4], [2, 5], [2, 7], [3, 8], [3, 10], [4, 10], [5, 7], [5, 8], [6, 8], [8, 10], [8, 11], [9, 10]],
+    hint: 'Find two people whose removal splits the room into many small groups.',
+    why: 'With A and I as hubs, four odd groups are left (5, 3, 1 and 1 people) and two hubs, so 2 people sit out. That makes four classic min-max theorems you have played: König, Ford and Fulkerson, Dilworth, and Tutte and Berge. Each says the best answer always comes with a short proof that nothing beats it. Not every puzzle is like that. For colouring a map with the fewest colours, nobody knows a kind of short proof that always works, and if one existed, a famous open question (NP versus coNP) would be settled in a way most experts doubt.' },
+);
+
 export const LEVELS = RAW.map(lv => ({ ...lv, trivial: trivialBound(lv) }));
 
 /** The bound a player gets for free, shown before they've built a proof. */
 export function trivialBound(lv) {
+  if (lv.kind === 'hubs') return { value: Math.floor(lv.pos.length / 2), low: 0, text: `${lv.pos.length} people` };
   if (lv.kind === 'pairs') return { value: Math.min(lv.top, lv.bottom), low: 0, text: 'each row has ' + Math.min(lv.top, lv.bottom) + (lv.top === lv.bottom ? ' people' : ' or more people') };
   if (lv.kind === 'grid') { const c = gridGraph(lv.rows).cells.length; return { value: Math.floor(c / 2), low: 0, text: `${c} squares` }; }
   if (lv.kind === 'pipes') {

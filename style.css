@@ -149,3 +149,9 @@ svg .handle.m-bound .ring { fill: #fff !important; }
 svg .handle.m-bound .lbl { fill: var(--ink); }
 svg .handle.marked .ring { fill: #3f7bbf !important; stroke: #24578f; }
 svg .handle.marked .lbl { fill: #fff; }
+
+/* hubs */
+svg.hubs { max-width: 560px; }
+svg .node.odd .ring { fill: #fbe3d6; stroke: #b4552d; }
+svg .badge circle { fill: #b4552d; }
+svg .badge text { fill: #fff; font-weight: 700; }

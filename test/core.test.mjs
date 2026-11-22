@@ -68,3 +68,17 @@ test('grid graph', () => {
   assert.deepEqual(g.cells, [0, 1, 2]);
   assert.deepEqual(g.edges, [[0, 1], [0, 2]]);
 });
+
+import { maxMatchingGeneral, hubBound } from '../src/core.js';
+test('general matching: the best hub bound equals the most pairs (Tutte-Berge), random small graphs', () => {
+  const R = rng(19);
+  for (let t = 0; t < 150; t++) {
+    const n = 2 + Math.floor(R() * 7), edges = [];
+    for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) if (R() < 0.35) edges.push([a, b]);
+    const m = maxMatchingGeneral(n, edges);
+    assert.equal(m, bruteMatch(edges));
+    let best = Infinity;
+    for (let s = 0; s < 1 << n; s++) { const h = []; for (let i = 0; i < n; i++) if (s >> i & 1) h.push(i); best = Math.min(best, hubBound(n, edges, h)); }
+    assert.equal(best, m);
+  }
+});

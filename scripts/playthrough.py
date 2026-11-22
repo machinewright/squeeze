@@ -14,7 +14,7 @@ with sync_playwright() as p:
         pg.goto(f'{url}#{i+1}'); pg.reload(); pg.wait_for_timeout(150)
         st = pg.locator('#stage')
         pg.click('#mode-build')
-        if s['kind'] == 'pairs':
+        if s['kind'] in ('pairs', 'hubs'):
             for e in s['build']: st.locator('g.line').nth(e).dispatch_event('click')
             pg.click('#mode-bound')
             for v in s['bound']: st.locator('g.node').nth(v).dispatch_event('click')

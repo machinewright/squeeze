@@ -3,8 +3,9 @@ import { mountPairs } from './src/views/pairs.js';
 import { mountGrid } from './src/views/grid.js';
 import { mountPipes } from './src/views/pipes.js';
 import { mountBoxes } from './src/views/boxes.js';
+import { mountHubs } from './src/views/hubs.js';
 
-const VIEWS = { pairs: mountPairs, grid: mountGrid, pipes: mountPipes, boxes: mountBoxes };
+const VIEWS = { pairs: mountPairs, grid: mountGrid, pipes: mountPipes, boxes: mountBoxes, hubs: mountHubs };
 const KEY = 'squeeze.v1';
 const $ = id => document.getElementById(id);
 

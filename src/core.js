@@ -174,3 +174,41 @@ export function konigCover(n, edges) {
   for (let v = 0; v < n; v++) if (adj[v].length && (left[v] ? !seen[v] : seen[v])) cover.push(v);
   return cover;
 }
+
+/** Maximum matching size in any small graph (n <= 20), by memoised search over the set of unmatched nodes. */
+export function maxMatchingGeneral(n, edges) {
+  const adj = new Array(n).fill(0);
+  for (const [a, b] of edges) { adj[a] |= 1 << b; adj[b] |= 1 << a; }
+  const memo = new Map();
+  const go = free => {
+    if (!free) return 0;
+    if (memo.has(free)) return memo.get(free);
+    const v = 31 - Math.clz32(free & -free), rest = free & ~(1 << v);
+    let best = go(rest); // v stays single
+    for (let m = adj[v] & rest; m; m &= m - 1) { const u = 31 - Math.clz32(m & -m); best = Math.max(best, 1 + go(rest & ~(1 << u))); }
+    memo.set(free, best);
+    return best;
+  };
+  return go((1 << n) - 1);
+}
+
+/** Groups left when the hubs are taken out: connected components of the other nodes. */
+export function groupsWithout(n, edges, hubs) {
+  const out = new Set(hubs), comp = new Array(n).fill(-1), groups = [];
+  for (let s = 0; s < n; s++) {
+    if (out.has(s) || comp[s] >= 0) continue;
+    const g = [s]; comp[s] = groups.length;
+    for (let k = 0; k < g.length; k++) for (const [a, b] of edges) {
+      const u = g[k], w = a === u ? b : b === u ? a : -1;
+      if (w >= 0 && !out.has(w) && comp[w] < 0) { comp[w] = groups.length; g.push(w); }
+    }
+    groups.push(g);
+  }
+  return groups;
+}
+
+/** Tutte-Berge bound: at most (n - (odd groups - hubs)) / 2 pairs, for any choice of hubs. */
+export function hubBound(n, edges, hubs) {
+  const odd = groupsWithout(n, edges, hubs).filter(g => g.length % 2).length;
+  return Math.floor((n - Math.max(0, odd - hubs.length)) / 2);
+}

@@ -1,10 +1,19 @@
 // Exact solution + proof for each level, as indices the play-through clicks (JSON on stdout).
 import { LEVELS } from '../src/levels.js';
-import { maxMatching, konigCover, maxFlow, reachable, minStacks, fits, gridGraph } from '../src/core.js';
+import { hubBound, maxMatchingGeneral, maxMatching, konigCover, maxFlow, reachable, minStacks, fits, gridGraph } from '../src/core.js';
 const out = LEVELS.map(lv => {
   if (lv.kind === 'pairs') {
     const A = lv.top, edges = lv.edges.map(([a, b]) => [a, A + b]), n = A + lv.bottom;
     return { id: lv.id, kind: lv.kind, build: maxMatching(n, edges), bound: konigCover(n, edges) };
+  }
+  if (lv.kind === 'hubs') {
+    const n = lv.pos.length, E = lv.edges, m = maxMatchingGeneral(n, E);
+    let pick = null;
+    const go = (i, used, chosen) => { if (pick) return; if (chosen.length === m) { pick = chosen.slice(); return; } if (i >= E.length) return; const [a, b] = E[i]; if (!used.has(a) && !used.has(b)) { used.add(a); used.add(b); chosen.push(i); go(i + 1, used, chosen); chosen.pop(); used.delete(a); used.delete(b); } go(i + 1, used, chosen); };
+    go(0, new Set(), []);
+    let hubs = null;
+    for (let s = 1; s < 1 << n && !hubs; s++) { const h = []; for (let i = 0; i < n; i++) if (s >> i & 1) h.push(i); if (hubBound(n, E, h) === m) hubs = h; }
+    return { id: lv.id, kind: lv.kind, build: pick, bound: hubs };
   }
   if (lv.kind === 'grid') {
     const g = gridGraph(lv.rows);
