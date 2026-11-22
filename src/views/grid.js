@@ -13,7 +13,7 @@ export function mountGrid(el, lv, st, report) {
   grid.style.gridTemplateColumns = `repeat(${W}, ${S}px)`;
   grid.setAttribute('role', 'grid'); grid.setAttribute('aria-label', `Board, ${H} rows by ${W} columns`);
   const tools = document.createElement('div'); tools.className = 'palette';
-  for (const [label, c] of [['Mark every dark square', 0], ['Mark every light square', 1]]) {
+  for (const [label, c] of [['Mark every shaded square', 0], ['Mark every white square', 1]]) {
     const b = document.createElement('button'); b.textContent = label;
     b.onclick = () => { st.marks = g.cells.filter(v => (Math.floor(v / W) + v % W) % 2 === c); draw(); };
     tools.append(b);
@@ -64,7 +64,8 @@ export function mountGrid(el, lv, st, report) {
       b.setAttribute('aria-label', `${name(v)}${inDom ? ', covered by a domino' : ''}${marks.has(v) ? ', marked' : ''}${v === sel ? ', selected' : ''}`);
     });
     grid.classList.toggle('faint', mode === 'bound');
-    tools.hidden = mode !== 'bound' || lv.shortcuts === false;
+    tools.hidden = lv.shortcuts === false;
+    tools.style.visibility = mode === 'bound' ? '' : 'hidden';
     const box = v => { const b = sq[v]; return [b.offsetLeft, b.offsetTop, b.offsetWidth, b.offsetHeight]; };
     let html = '';
     for (const [a, b] of st.doms) {

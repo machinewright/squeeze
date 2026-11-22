@@ -62,6 +62,10 @@ function open(i) {
   if (!work.has(lv.id)) work.set(lv.id, {});
   const stage = $('stage'); stage.innerHTML = '';
   view = VIEWS[lv.kind](stage, lv, work.get(lv.id), report);
+  // keep the board still when switching modes: reserve room for the longer instructions
+  const h = $('howto'); h.style.minHeight = '';
+  let tall = 0; for (const t of [lv.howBuild, lv.howBound]) { h.innerHTML = t; tall = Math.max(tall, h.offsetHeight); }
+  h.style.minHeight = tall + 'px';
   setMode('build');
   nav();
 }
@@ -90,7 +94,7 @@ function report(r) {
   const bTxt = built !== null ? `Your answer: ${plural(lv, built)}` : `Your answer: ${r.builtProblem || 'none yet'}`;
   const pTxt = bound !== null ? `Your proof: ${max ? 'at most' : 'at least'} ${bound}` : `Your proof: ${r.boundProblem || 'none yet'}${lv.trivial.text ? ` (${lv.trivial.text})` : ''}`;
   const range = met ? `The answer is exactly ${built}.` : lo === hi ? `` : `The answer is somewhere from ${lo} to ${hi}.`;
-  $('meter').innerHTML = `<div class="row">${cells}</div><div class="cap"><span class="b1">${bTxt}</span><span class="b2">${pTxt}</span></div><span class="visually-hidden">${range}</span>`;
+  $('meter').innerHTML = `<p class="lab">${met ? 'The answer' : 'The answer could be'}</p><div class="row">${cells}</div><div class="cap"><span class="b1">${bTxt}</span><span class="b2">${pTxt}</span></div><span class="visually-hidden">${range}</span>`;
   $('status').innerHTML = r.status || '';
   if (met) {
     const first = !progress.solved.includes(lv.id);

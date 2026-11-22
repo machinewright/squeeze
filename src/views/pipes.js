@@ -13,7 +13,7 @@ export function mountPipes(el, lv, st, report) {
   const P = lv.pos.map(([x, y]) => [pad + x * (W - 2 * pad), pad + y * (H - 2 * pad)]);
   const name = v => v === s ? 'IN' : v === t ? 'OUT' : String.fromCharCode(64 + v);
   el.innerHTML = '';
-  const svg = svgEl('svg', { class: 'board pipes', viewBox: `0 0 ${W} ${H}`, role: 'group', 'aria-label': 'Pipes' });
+  const svg = svgEl('svg', { class: 'board pipes' + (narrow ? ' narrow' : ''), viewBox: `0 0 ${W} ${H}`, role: 'group', 'aria-label': 'Pipes' });
   const chips = document.createElement('div'); chips.className = 'chips';
   el.append(svg, chips);
   const pipes = E.map(([a, b, c], i) => {
@@ -24,7 +24,7 @@ export function mountPipes(el, lv, st, report) {
     const water = svgEl('line', { x1, y1, x2, y2, class: 'water', 'stroke-width': 0 });
     const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
     const ah = 6 + c * 0.6;
-    const arrow = svgEl('path', { class: 'arrow', d: `M${mx + ux * ah},${my + uy * ah} L${mx - ux * ah - uy * ah},${my - uy * ah + ux * ah} L${mx - ux * ah + uy * ah},${my - uy * ah - ux * ah}Z` });
+    const arrow = svgEl('path', { class: 'arrow', d: `M${mx + ux * ah},${my + uy * ah} L${mx - ux * ah - uy * ah * 0.6},${my - uy * ah + ux * ah * 0.6} L${mx - ux * ah + uy * ah * 0.6},${my - uy * ah - ux * ah * 0.6}Z` });
     const lx = mx - uy * (wpx / 2 + 11), ly = my + ux * (wpx / 2 + 11);
     const lab = svgEl('text', { x: lx, y: ly, class: 'small' });
     const ct = Math.min(0.5, Math.max(0.3, (R + 14) / d)), cx = x1 + (x2 - x1) * ct, cy = y1 + (y2 - y1) * ct;

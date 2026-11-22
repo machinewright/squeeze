@@ -20,24 +20,39 @@ export function mountHubs(el, lv, st, report) {
     const [x1, y1] = P[a], [x2, y2] = P[b];
     const vis = svgEl('line', { x1, y1, x2, y2, class: 'ln' }), hit = svgEl('line', { x1, y1, x2, y2, class: 'hit' });
     g.append(vis, hit); svg.append(g);
-    activate(g, () => {
-      if (mode !== 'build') return;
-      const k = st.pairs.indexOf(i);
-      if (k >= 0) st.pairs.splice(k, 1);
-      else { st.pairs = st.pairs.filter(j => !edges[j].includes(a) && !edges[j].includes(b)); st.pairs.push(i); }
-      draw();
-    });
+    activate(g, () => { if (mode === 'build') togglePair(i); });
     return { g, vis };
   });
   const nodes = P.map(([x, y], v) => {
-    const g = svgEl('g', { class: 'act node' });
+    const g = svgEl('g', { class: 'act node', tabindex: '0' });
     g.append(svgEl('circle', { cx: x, cy: y, r: R + 6, class: 'halo' }), svgEl('circle', { cx: x, cy: y, r: R, class: 'ring' }));
     const t = svgEl('text', { x, y, class: 'lbl' }); t.textContent = name(v); g.append(t);
     svg.append(g);
-    activate(g, () => { if (mode !== 'bound') return; const k = st.hubs.indexOf(v); if (k >= 0) st.hubs.splice(k, 1); else st.hubs.push(v); draw(); });
+    activate(g, () => { if (mode !== 'bound') return pick(v); const k = st.hubs.indexOf(v); if (k >= 0) st.hubs.splice(k, 1); else st.hubs.push(v); draw(); });
     return g;
   });
   const badges = svgEl('g'); svg.append(badges);
+  let sel = -1, msg = '';
+  const nm = name;
+  function togglePair(i) {
+    sel = -1; msg = '';
+    const k = st.pairs.indexOf(i);
+    if (k >= 0) st.pairs.splice(k, 1);
+    else {
+      const [a, b] = edges[i];
+      const broken = st.pairs.filter(j => edges[j].includes(a) || edges[j].includes(b));
+      if (broken.length) msg = `Broke up ${broken.map(j => edges[j].map(nm).join('–')).join(' and ')} to pair ${nm(a)}–${nm(b)}.`;
+      st.pairs = st.pairs.filter(j => !broken.includes(j));
+      st.pairs.push(i);
+    }
+    draw();
+  }
+  function pick(v) {
+    if (sel < 0 || sel === v) { sel = sel === v ? -1 : v; msg = sel >= 0 ? `${nm(v)} selected: now tap someone joined to ${nm(v)} by a line.` : ''; return draw(); }
+    const i = edges.findIndex(e => e.includes(sel) && e.includes(v));
+    if (i < 0) { sel = v; msg = `${nm(v)} selected: now tap someone joined to ${nm(v)} by a line.`; return draw(); }
+    togglePair(i);
+  }
 
   function draw() {
     const pairSet = new Set(st.pairs), hubs = new Set(st.hubs);
@@ -53,8 +68,8 @@ export function mountHubs(el, lv, st, report) {
       g.classList.toggle('marked', hubs.has(v));
       g.classList.toggle('inpair', st.pairs.some(i => edges[i].includes(v)));
       g.classList.toggle('odd', mode === 'bound' && st.hubs.length > 0 && oddOf.has(v));
-      g.setAttribute('tabindex', mode === 'bound' ? '0' : '-1');
-      g.setAttribute('aria-pressed', String(hubs.has(v)));
+      g.classList.toggle('sel', mode === 'build' && v === sel);
+      g.setAttribute('aria-pressed', String(mode === 'bound' ? hubs.has(v) : v === sel));
       const grp = groups.find(gr => gr.includes(v));
       g.setAttribute('aria-label', `Person ${name(v)}${hubs.has(v) ? ', hub' : st.hubs.length ? `, in a group of ${grp.length}` : ''}`);
     });
@@ -73,13 +88,13 @@ export function mountHubs(el, lv, st, report) {
     report({
       built: st.pairs.length,
       bound,
-      status: mode === 'bound' && st.hubs.length
+      status: mode === 'build' ? msg : st.hubs.length
         ? `Without the hubs: ${odd.length} odd group${odd.length === 1 ? '' : 's'}${odd.length ? ` (${sizes})` : ''} and ${st.hubs.length} hub${st.hubs.length === 1 ? '' : 's'}, so at least ${left} ${left === 1 ? 'person dances' : 'people dance'} with nobody: at most (${n} − ${left}) ÷ 2${(n - left) % 2 ? ', rounded down,' : ''} = ${bound} pairs.`
         : '',
     });
   }
   return {
-    setMode(m) { mode = m; draw(); },
+    setMode(m) { mode = m; sel = -1; msg = ''; draw(); },
     clear(m) { if (m === 'build') st.pairs = []; else st.hubs = []; draw(); },
   };
 }

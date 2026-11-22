@@ -58,12 +58,13 @@ button.quiet { font-weight: 500; color: var(--muted); }
 /* meter */
 .meter { margin: 4px 0 6px; }
 .meter .row { display: flex; gap: 2px; }
-.meter .cell { flex: 1 1 0; min-width: 0; max-width: 34px; height: 30px; display: grid; place-items: center; font: 600 13px/1 var(--sans);
-  color: #9aa0aa; background: #fff; border: 1px solid #e6e0d3; border-radius: 5px; }
-.meter .cell.in { background: #f4efe2; color: var(--ink); border-color: #d9cfb8; }
-.meter .cell.built { background: #c98a2b; color: #fff; border-color: #c98a2b; }
-.meter .cell.bound { background: #3f7bbf; color: #fff; border-color: #3f7bbf; }
-.meter .cell.met { background: #1d7a48; color: #fff; border-color: #1d7a48; }
+.meter .lab { font: 600 12px/1 var(--sans); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 0 0 5px; }
+.meter .cell { flex: 1 1 0; min-width: 0; max-width: 34px; height: 26px; display: grid; place-items: center; font: 600 12.5px/1 var(--sans);
+  color: #c3c7cf; background: transparent; border-bottom: 3px solid #e6e0d3; }
+.meter .cell.in { color: var(--ink); border-bottom-color: #b9ad92; background: #ece5d5; }
+.meter .cell.built { background: #c98a2b; color: #fff; border-color: #8a5a12; border-radius: 4px 4px 0 0; }
+.meter .cell.bound { background: #3f7bbf; color: #fff; border-color: #24578f; border-radius: 4px 4px 0 0; }
+.meter .cell.met { background: #1d7a48; color: #fff; border-color: #11502e; border-radius: 4px 4px 0 0; }
 .meter .cap { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; margin-top: 6px; flex-wrap: wrap; }
 .meter .cap .b1 { color: #8a5a12; font-weight: 600; } .meter .cap .b2 { color: #2c5f99; font-weight: 600; }
 .verdict .solved { font: 650 1.25em/1.3 var(--serif); color: #1d7a48; margin: 0 0 6px; }
@@ -155,3 +156,6 @@ svg.hubs { max-width: 560px; }
 svg .node.odd .ring { fill: #fbe3d6; stroke: #b4552d; }
 svg .badge circle { fill: #b4552d; }
 svg .badge text { fill: #fff; font-weight: 700; }
+svg .node.sel .ring { stroke: #c98a2b; stroke-width: 4; fill: #fdf1dc; }
+svg .node.sel .halo { stroke: #c98a2b; stroke-width: 2; }
+svg.pipes.narrow .small { font-size: 10.5px; }

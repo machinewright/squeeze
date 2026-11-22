@@ -28,25 +28,36 @@ export function mountPairs(el, lv, st, report) {
     return { g, vis };
   });
   const nodes = [...Array(n).keys()].map(v => {
-    const g = svgEl('g', { class: 'act node', 'aria-label': `Person ${name[v]}` });
+    const g = svgEl('g', { class: 'act node', tabindex: '0', 'aria-label': `Person ${name[v]}` });
     const [x, y] = pos[v];
     g.append(svgEl('circle', { cx: x, cy: y, r: R + 6, class: 'halo' }), svgEl('circle', { cx: x, cy: y, r: R, class: 'ring' }));
     const t = svgEl('text', { x, y, class: 'lbl' }); t.textContent = name[v]; g.append(t);
     svg.append(g);
-    activate(g, () => { if (mode !== 'bound') return; toggle(st.marks, v); draw(); });
+    activate(g, () => { if (mode === 'bound') { toggle(st.marks, v); draw(); } else pick(v); });
     return g;
   });
   let mode = 'build';
 
+  let sel = -1, msg = '';
+  const nm = v => name[v];
   function togglePair(i) {
+    sel = -1; msg = '';
     const k = st.pairs.indexOf(i);
     if (k >= 0) st.pairs.splice(k, 1);
     else {
       const [a, b] = edges[i];
-      st.pairs = st.pairs.filter(j => !edges[j].includes(a) && !edges[j].includes(b));
+      const broken = st.pairs.filter(j => edges[j].includes(a) || edges[j].includes(b));
+      if (broken.length) msg = `Broke up ${broken.map(j => edges[j].map(nm).join('–')).join(' and ')} to pair ${nm(a)}–${nm(b)}.`;
+      st.pairs = st.pairs.filter(j => !broken.includes(j));
       st.pairs.push(i);
     }
     draw();
+  }
+  function pick(v) {
+    if (sel < 0 || sel === v) { sel = sel === v ? -1 : v; msg = sel >= 0 ? `${nm(v)} selected: now tap someone joined to ${nm(v)} by a line.` : ''; return draw(); }
+    const i = edges.findIndex(e => e.includes(sel) && e.includes(v));
+    if (i < 0) { sel = v; msg = `${nm(v)} selected: now tap someone joined to ${nm(v)} by a line.`; return draw(); }
+    togglePair(i);
   }
 
   function draw() {
@@ -59,8 +70,8 @@ export function mountPairs(el, lv, st, report) {
     nodes.forEach((g, v) => {
       g.classList.toggle('marked', marks.has(v));
       g.classList.toggle('inpair', st.pairs.some(i => edges[i].includes(v)));
-      g.setAttribute('tabindex', mode === 'bound' ? '0' : '-1');
-      g.setAttribute('aria-pressed', String(marks.has(v)));
+      g.classList.toggle('sel', mode === 'build' && v === sel);
+      g.setAttribute('aria-pressed', String(mode === 'bound' ? marks.has(v) : v === sel));
     });
     svg.classList.toggle('m-bound', mode === 'bound');
     const ok = isMatching(edges, st.pairs);
@@ -68,11 +79,11 @@ export function mountPairs(el, lv, st, report) {
       built: ok ? st.pairs.length : null,
       bound: open.size === 0 && st.marks.length ? st.marks.length : null,
       boundProblem: st.marks.length ? `${open.size} line${open.size === 1 ? '' : 's'} touch no marked person` : null,
-      status: mode === 'bound' && st.marks.length && open.size ? `<span class="bad">${open.size} line${open.size === 1 ? '' : 's'}</span> still touch${open.size === 1 ? 'es' : ''} no marked person (shown in red).` : '',
+      status: mode === 'build' ? msg : st.marks.length && open.size ? `<span class="bad">${open.size} line${open.size === 1 ? '' : 's'}</span> still touch${open.size === 1 ? 'es' : ''} no marked person (shown in red).` : '',
     });
   }
   return {
-    setMode(m) { mode = m; draw(); },
+    setMode(m) { mode = m; sel = -1; msg = ''; draw(); },
     clear(m) { if (m === 'build') st.pairs = []; else st.marks = []; draw(); },
   };
 }

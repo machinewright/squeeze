@@ -47,7 +47,7 @@ export function mountBoxes(el, lv, st, report) {
 
   function draw() {
     penBtns.forEach((b, k) => { b.setAttribute('aria-checked', String(k === pen)); b.style.boxShadow = k === pen ? `inset 0 0 0 2px ${STACK_COLOURS[k]}` : ''; });
-    pal.hidden = mode !== 'build';
+    pal.style.visibility = mode === 'build' ? '' : 'hidden';
     const marks = new Set(st.marks);
     let lk = '', badStack = null;
     for (let k = 0; k < K; k++) {
