@@ -1,3 +1,4 @@
+[hidden] { display: none !important; }
 @font-face { font-family: "Source Serif 4"; font-style: normal; font-weight: 200 900; font-display: swap;
   src: url(fonts/source-serif-4-latin-opsz-normal.woff2) format("woff2-variations"); }
 @font-face { font-family: "Source Serif 4"; font-style: italic; font-weight: 200 900; font-display: swap;
@@ -88,10 +89,11 @@ svg .small { font: 600 12px var(--sans); text-anchor: middle; dominant-baseline:
 .grid { display: grid; gap: 0; margin: 0 auto; width: fit-content; position: relative; }
 .grid .sq { width: 46px; height: 46px; border: 1px solid #ddd5c4; display: grid; place-items: center; font: 600 13px/1 var(--sans);
   padding: 0; border-radius: 0; box-shadow: none; position: relative; }
-.grid .sq.dark { background: #f1ece1; } .grid .sq.light { background: #fff; }
+.grid .sq.dark { background: #e9e2d3; } .grid .sq.light { background: #fff; }
 .grid .sq.hole { background: #3a404c; border-color: #3a404c; cursor: default; }
 .grid .sq.sel { box-shadow: inset 0 0 0 3px #c98a2b; }
-.grid .sq.mark::after { content: ""; width: 18px; height: 18px; border-radius: 50%; background: #3f7bbf; }
+.grid .dot { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #3f7bbf; border: 2px solid #fff; pointer-events: none; }
+.grid:not(.faint) .dot { opacity: .45; }
 .grid .dom { position: absolute; background: #e9b25a; border: 2px solid #a8650f; border-radius: 8px; pointer-events: none; opacity: .92; }
 .grid .gap { position: absolute; background: #d0533f; border-radius: 3px; pointer-events: none; }
 .grid.faint .dom { opacity: .35; }

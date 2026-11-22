@@ -71,6 +71,7 @@ export function mountGrid(el, lv, st, report) {
       const [x1, y1, w, h] = box(Math.min(a, b)), [x2, y2] = box(Math.max(a, b));
       html += `<div class="dom" style="left:${x1 + 4}px;top:${y1 + 4}px;width:${x2 - x1 + w - 8}px;height:${y2 - y1 + h - 8}px"></div>`;
     }
+    for (const v of st.marks) { const [x, y, w, h] = box(v); html += `<div class="dot" style="left:${x + w / 2 - 9}px;top:${y + h / 2 - 9}px"></div>`; }
     if (mode === 'bound' && st.marks.length) for (const i of open) {
       const [a, b] = g.edges[i], [x1, y1, w, h] = box(a), [x2, y2] = box(b);
       html += x2 > x1

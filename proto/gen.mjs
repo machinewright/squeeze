@@ -63,15 +63,21 @@ if (kind === 'pairs') {
     found.push({ rows, m, cells: gg.cells.length, greedy: gr });
   }
 } else if (kind === 'pipes') {
-  const layers = (process.argv[5] || '3,3').split(',').map(Number);
+  const layers = (process.argv[5] || '3,3').split(',').map(Number), MAXC = +(process.argv[6] || 0);
   for (let tries = 0; tries < 20000 && found.length < want; tries++) {
     const L = [[0]]; let n = 1;
     for (const k of layers) { L.push([...Array(k).keys()].map(i => n + i)); n += k; }
     L.push([n]); n++;
     const edges = [];
-    for (let l = 0; l + 1 < L.length; l++) for (const a of L[l]) for (const b of L[l + 1]) if (l === 0 || l === L.length - 2 || R() < 0.5) edges.push([a, b, ri(1, 5)]);
+    // local edges only: node i of a layer to nodes at a similar height in the next layer
+    const yOf = v => { for (const lay of L) { const i = lay.indexOf(v); if (i >= 0) return lay.length === 1 ? 0.5 : i / (lay.length - 1); } };
+    for (let l = 0; l + 1 < L.length; l++) for (const a of L[l]) for (const b of L[l + 1]) if (l === 0 || l === L.length - 2 || (Math.abs(yOf(a) - yOf(b)) < 0.6 && R() < 0.6)) edges.push([a, b, ri(1, 5)]);
     for (let l = 1; l + 1 < L.length; l++) for (let i = 0; i + 1 < L[l].length; i++) if (R() < 0.3) edges.push(R() < 0.5 ? [L[l][i], L[l][i + 1], ri(1, 3)] : [L[l][i + 1], L[l][i], ri(1, 3)]);
     const s = 0, t = n - 1;
+    const P = []; L.forEach((lay, l) => lay.forEach(v => { P[v] = [l / (L.length - 1), yOf(v)]; }));
+    const cross = (p1, p2, p3, p4) => { const d = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]); return d(p1, p2, p3) * d(p1, p2, p4) < 0 && d(p3, p4, p1) * d(p3, p4, p2) < 0; };
+    let nc = 0; for (let i = 0; i < edges.length; i++) for (let j = i + 1; j < edges.length; j++) if (cross(P[edges[i][0]], P[edges[i][1]], P[edges[j][0]], P[edges[j][1]])) nc++;
+    if (nc > MAXC) continue;
     const v = maxFlow(n, edges, s, t).value;
     const outCap = edges.filter(e => e[0] === s).reduce((x, e) => x + e[2], 0), inCap = edges.filter(e => e[1] === t).reduce((x, e) => x + e[2], 0);
     if (v >= Math.min(outCap, inCap) - 1) continue;
