@@ -9,7 +9,7 @@ export function mountPipes(el, lv, st, report) {
   st.routes ??= []; st.closed ??= [];
   let mode = 'build', cur = [s], msg = '';
   const narrow = el.clientWidth > 0 && el.clientWidth < 480;
-  const W = narrow ? 330 : 560, H = Math.round(W * (lv.aspect || 0.52)), pad = narrow ? 28 : 40, R = narrow ? 14 : 17;
+  const W = narrow ? 330 : 560, H = Math.round(W * (narrow ? Math.max(0.8, (lv.aspect || 0.52) * 1.5) : (lv.aspect || 0.52))), pad = narrow ? 28 : 40, R = narrow ? 14 : 17;
   const P = lv.pos.map(([x, y]) => [pad + x * (W - 2 * pad), pad + y * (H - 2 * pad)]);
   const name = v => v === s ? 'IN' : v === t ? 'OUT' : String.fromCharCode(64 + v);
   el.innerHTML = '';
@@ -19,7 +19,7 @@ export function mountPipes(el, lv, st, report) {
   const pipes = E.map(([a, b, c], i) => {
     const [x1, y1] = P[a], [x2, y2] = P[b], d = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / d, uy = (y2 - y1) / d;
     const g = svgEl('g', { class: 'act pipe', 'aria-label': `Pipe ${name(a)} to ${name(b)}, carries up to ${c}` });
-    const wpx = 3 + 2.2 * c;
+    const wpx = narrow ? 2 + 1.5 * c : 3 + 2.2 * c;
     const shell = svgEl('line', { x1, y1, x2, y2, class: 'shell', 'stroke-width': wpx + 3 });
     const water = svgEl('line', { x1, y1, x2, y2, class: 'water', 'stroke-width': 0 });
     const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
@@ -27,7 +27,7 @@ export function mountPipes(el, lv, st, report) {
     const arrow = svgEl('path', { class: 'arrow', d: `M${mx + ux * ah},${my + uy * ah} L${mx - ux * ah - uy * ah},${my - uy * ah + ux * ah} L${mx - ux * ah + uy * ah},${my - uy * ah - ux * ah}Z` });
     const lx = mx - uy * (wpx / 2 + 11), ly = my + ux * (wpx / 2 + 11);
     const lab = svgEl('text', { x: lx, y: ly, class: 'small' });
-    const cx = x1 + (x2 - x1) * 0.3, cy = y1 + (y2 - y1) * 0.3;
+    const ct = Math.min(0.5, Math.max(0.3, (R + 14) / d)), cx = x1 + (x2 - x1) * ct, cy = y1 + (y2 - y1) * ct;
     const cross = svgEl('path', { class: 'cross', d: `M${cx - 8},${cy - 8}L${cx + 8},${cy + 8}M${cx + 8},${cy - 8}L${cx - 8},${cy + 8}` });
     const hit = svgEl('line', { x1, y1, x2, y2, class: 'hit' });
     g.append(shell, water, arrow, lab, cross, hit);
