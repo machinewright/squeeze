@@ -49,3 +49,23 @@ test('pipes and hubs: no two lines cross in the drawing; every junction has a wa
     for (let i = 0; i < E.length; i++) for (let j = 0; j < E.length; j++) if (i !== j) assert.ok(!(E[i][0] === E[j][1] && E[i][1] === E[j][0]) && !(E[i][0] === E[j][0] && E[i][1] === E[j][1]), `${lv.id} parallel pipes`);
   }
 });
+
+// Pairs 3 and 4 promise that a first plan gets stuck: sweeping either row in either direction, each person taking
+// the nearest free partner, must fall short of the best answer.
+import { orderRows } from '../src/views/pairs.js';
+test('Pairs 3 and 4: the obvious sweeps fall one short', () => {
+  for (const id of ['p3', 'p4']) {
+    const lv = LEVELS.find(l => l.id === id), A = lv.top;
+    const edges = lv.edges.map(([a, b]) => [a, A + b]), order = orderRows(A, lv.bottom, edges);
+    const best = maxMatching(A + lv.bottom, edges).length;
+    for (const [row, other] of [[order.top, order.bottom], [order.bottom, order.top]]) for (const rev of [false, true]) {
+      const r = rev ? [...row].reverse() : row, o = rev ? [...other].reverse() : other, used = new Set();
+      let m = 0;
+      for (const v of r) {
+        const w = o.find(x => !used.has(x) && edges.some(e => e.includes(v) && e.includes(x)));
+        if (w !== undefined) { used.add(w); m++; }
+      }
+      assert.ok(m < best, `${id}: a sweep reaches ${m} of ${best}`);
+    }
+  }
+});

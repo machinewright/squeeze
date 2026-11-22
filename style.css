@@ -159,3 +159,7 @@ svg .badge text { fill: #fff; font-weight: 700; }
 svg .node.sel .ring { stroke: #c98a2b; stroke-width: 4; fill: #fdf1dc; }
 svg .node.sel .halo { stroke: #c98a2b; stroke-width: 2; }
 svg.pipes.narrow .small { font-size: 10.5px; }
+/* phones: captions stacked with room reserved, so the board below never moves while you play */
+@media (max-width: 480px) { .meter .cap { flex-direction: column; flex-wrap: nowrap; gap: 2px; line-height: 1.35; } .meter .cap .b2 { min-height: 2.7em; } }
+/* in proof mode the pairs step back, so a gold ring is not mistaken for a mark */
+svg.m-bound .node.inpair:not(.marked) .ring { stroke: #dcc9a3; stroke-width: 2.5; }
