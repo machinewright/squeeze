@@ -98,12 +98,12 @@ svg .small { font: 600 12px var(--sans); text-anchor: middle; dominant-baseline:
 .grid .dom { position: absolute; background: #e9b25a; border: 2px solid #a8650f; border-radius: 8px; pointer-events: none; opacity: .92; }
 .grid .gap { position: absolute; background: #d0533f; border-radius: 3px; pointer-events: none; }
 .grid.faint .dom { opacity: .35; }
-@media (max-width: 480px) { .grid .sq { width: 40px; height: 40px; } main { padding: 24px 12px 56px; } .panel { padding: 16px 12px; } .stage { padding: 10px 6px; } }
+@media (max-width: 480px) { .levels { gap: 4px; } .levels button { min-width: 0; padding: 6px 7px; font-size: 12.5px; } h1 { font-size: 2em; } .dek { font-size: 1.05em; margin-bottom: 1em; } .grid .sq { width: 40px; height: 40px; } main { padding: 24px 12px 56px; } .panel { padding: 16px 12px; } .stage { padding: 10px 6px; } }
 
 /* pairs */
 svg .ln { stroke: #a3a8b1; stroke-width: 2.5; stroke-linecap: round; }
 svg .ln.paired { stroke: #c98a2b; stroke-width: 7; }
-svg.m-bound .ln.paired { stroke: #e7c38c; }
+svg.m-bound .ln.paired { stroke: #f1dfc0; stroke-width: 5; }
 svg .ln.open { stroke: #d0533f; stroke-dasharray: 6 5; stroke-width: 3; }
 svg .ln.covered { stroke: #d5d9df; }
 svg.m-bound .ln.paired.covered { stroke: #efdcbc; }

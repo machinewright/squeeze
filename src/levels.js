@@ -35,7 +35,7 @@ const HUBS = {
   question: 'How many pairs can dance at once?',
   labels: { build: 'Make pairs', bound: 'Prove: at most…' },
   howBuild: 'Click a line, or two people joined by one, to pair them; click the line again to undo. There are no rows now: anyone may dance with anyone they\'re joined to.',
-  howBound: 'Click people to make them <b>hubs</b>. Without the hubs, everyone else falls into separate groups. A group with an odd number of people can\'t pair up among themselves: someone is left over, and could only dance with a hub. Each hub takes at most one of them.',
+  howBound: '<b>1.</b> Click people to make them hubs. <b>2.</b> Look at everyone else: they fall into groups, people still joined to each other by lines once the hubs are gone. A group with an <b>odd</b> number of people can\'t pair up among themselves, so someone is left over, and only a hub could dance with them. Each hub rescues at most one. Even groups don\'t matter.',
 };
 
 /** Layered positions for pipe networks: IN, then each layer top to bottom, then OUT. */
@@ -139,7 +139,7 @@ const RAW = [
 RAW.push(
   // ---- Without rows (Tutte-Berge: most pairs = best hub bound)
   { ...HUBS, id: 'h1', chapter: 'Without rows', title: 'Three triangles',
-    setup: 'The last chapter goes back to dancing, but without rows. Marking people who touch every line would still be a proof, but here it can\'t reach the answer. Try the new proof: hubs.',
+    setup: 'The last chapter goes back to dancing, but without rows: anyone joined by a line may pair up. The old proof, marking people who touch every line, still gives an upper bound, but in a triangle it needs two marks while only one pair fits. So this chapter has a new proof: hubs.',
     pos: [[0.5, 0.56], [0.5, 0.27], [0.33, 0], [0.67, 0], [0.3, 0.72], [0, 0.6], [0.1, 1], [0.7, 0.72], [1, 0.6], [0.9, 1]],
     edges: [[0, 1], [1, 2], [1, 3], [2, 3], [0, 4], [4, 5], [4, 6], [5, 6], [0, 7], [7, 8], [7, 9], [8, 9]],
     hint: 'What happens to the three triangles if A is a hub?',

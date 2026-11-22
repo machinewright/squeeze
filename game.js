@@ -99,7 +99,7 @@ function report(r) {
   if (met) {
     const first = !progress.solved.includes(lv.id);
     if (first) { progress.solved.push(lv.id); save(); nav(); }
-    $('verdict').innerHTML = `<p class="solved">Squeezed: the ${max ? 'most' : 'fewest'} is ${built}.</p><p class="why">${lv.why}</p>`;
+    $('verdict').innerHTML = `<p class="solved">Squeezed: the ${max ? 'most' : 'fewest'} is ${built}.</p><p class="why">${lv.why}</p>${cur + 1 >= LEVELS.length ? `<p class="why"><b>${progress.solved.length >= LEVELS.length ? 'That was the last level, and you have squeezed them all.' : `That was the last level. ${LEVELS.length - progress.solved.length} earlier level${LEVELS.length - progress.solved.length === 1 ? ' is' : 's are'} still open.`}</b> Thanks for playing.</p>` : ''}`;
     $('next-btn').hidden = cur + 1 >= LEVELS.length;
   } else {
     $('verdict').innerHTML = '';

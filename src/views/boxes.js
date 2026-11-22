@@ -87,7 +87,7 @@ export function mountBoxes(el, lv, st, report) {
     if (mode === 'build') status = badStack ? `<span class="bad">Stack ${badStack[0] + 1} doesn't stack:</span> neither of ${name(badStack[1])} and ${name(badStack[2])} fits inside the other.` : alone && used ? `Boxes in no stack count as a stack of one each (${alone} now).` : '';
     else if (bad) status = `<span class="bad">${fmt(bad)}</span>, so those two could share a stack. Marked boxes must be ones that never fit together.`;
     report({
-      built: badStack ? null : used + alone,
+      built: badStack || !used ? null : used + alone,
       builtProblem: badStack ? `stack ${badStack[0] + 1} doesn't stack` : null,
       bound: st.marks.length && !bad ? st.marks.length : null,
       boundProblem: bad ? 'two marked boxes fit together' : null,
