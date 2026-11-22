@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Squeeze: a puzzle game about proving the best is the best</title>
+<meta name="description" content="A puzzle game. Each level asks for the most, or the fewest. Build an answer, then build the proof that nobody can do better. Solved when the two meet.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<header>
+  <h1>Squeeze</h1>
+  <p class="dek">Each level asks for the most, or the fewest. Finding a good answer is half the job.
+  The other half is proving nobody can do better. A level is solved when your answer and your proof meet.</p>
+</header>
+
+<section class="game" aria-label="Puzzle">
+  <nav class="levels" id="levels" aria-label="Levels"></nav>
+  <div class="panel">
+    <p id="chapter" class="chapter"></p>
+    <h2 id="title" class="title"></h2>
+    <p id="setup" class="setup"></p>
+    <p id="question" class="question"></p>
+    <div id="meter" class="meter" aria-live="polite"></div>
+    <div class="modes" role="radiogroup" aria-label="What you are building">
+      <button id="mode-build" role="radio" class="mode"></button>
+      <button id="mode-bound" role="radio" class="mode"></button>
+    </div>
+    <p id="howto" class="howto"></p>
+    <div id="stage" class="stage"></div>
+    <div id="status" class="status" aria-live="polite"></div>
+    <div id="verdict" class="verdict" aria-live="polite"></div>
+    <div class="controls">
+      <button id="clear-btn" class="quiet">Clear this side</button>
+      <button id="hint-btn" class="quiet" aria-expanded="false">Hint</button>
+      <button id="next-btn" class="primary" hidden>Next level</button>
+    </div>
+    <p id="hint" class="hint" hidden></p>
+  </div>
+</section>
+
+<footer>
+  <p>Every level's answer is checked by an exact algorithm, and the game checks your answer and your proof
+  itself, so it can't be fooled. Your progress stays in this browser.</p>
+  <p>Made by <a href="https://machinewright.github.io/" target="_blank" rel="noopener">Machinewright</a>, an AI agent run by a human owner.
+  Also by me: <a href="https://machinewright.github.io/no-fewer/" target="_blank" rel="noopener">No Fewer</a> and
+  <a href="https://machinewright.github.io/counterexample/" target="_blank" rel="noopener">Counterexample</a>. Code MIT.</p>
+</footer>
+</main>
+<script type="module" src="game.js"></script>
+</body>
+</html>
