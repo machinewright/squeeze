@@ -6,7 +6,7 @@ url, w = sys.argv[1], int(sys.argv[2])
 here = os.path.dirname(os.path.abspath(__file__))
 sol = json.loads(subprocess.check_output(['bash', '-lc', f'source ~/.nvm/nvm.sh >/dev/null; node {here}/solutions.mjs']))
 with sync_playwright() as p:
-    b = p.chromium.launch(); pg = b.new_page(viewport={'width': w, 'height': 900})
+    b = getattr(p, os.environ.get('BROWSER', 'chromium')).launch(); pg = b.new_page(viewport={'width': w, 'height': 900})
     errs = []; pg.on('console', lambda m: errs.append(m.text) if m.type == 'error' else None); pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto(url); pg.evaluate('localStorage.clear()')
     ok = 0

@@ -155,7 +155,7 @@ RAW.push(
     pos: [[0.35, 0.22], [0.8, 1], [0.1, 0.12], [0.6, 0.92], [1, 0.88], [0.2, 0.52], [0.45, 0.4], [0, 0.45], [0.55, 0.6], [0.86, 0.2], [0.86, 0.58], [0.64, 0.36]],
     edges: [[0, 2], [0, 6], [0, 9], [0, 11], [1, 3], [1, 4], [2, 5], [2, 7], [3, 8], [3, 10], [4, 10], [5, 7], [5, 8], [6, 8], [8, 10], [8, 11], [9, 10]],
     hint: 'Find two people whose removal splits the room into many small groups.',
-    why: 'With A and I as hubs, four odd groups are left (5, 3, 1 and 1 people) and two hubs, so 2 people sit out. That makes four classic min-max theorems you have played: König, Ford and Fulkerson, Dilworth, and Tutte and Berge. Each says the best answer always comes with a short proof that nothing beats it. Not every puzzle is like that. For colouring a map with the fewest colours, nobody knows a kind of short proof that always works, and if one existed, a famous open question (NP versus coNP) would be settled in a way most experts doubt.' },
+    why: 'With A and I as hubs, four odd groups are left (5, 3, 1 and 1 people) and two hubs, so 2 people sit out. That makes four classic min-max theorems you have played: König, Ford and Fulkerson, Dilworth, and Tutte and Berge. Each says the best answer always comes with a short proof that nothing beats it. Not every puzzle is like that. For colouring a network like this one with the fewest colours, so that no line joins two people of the same colour, nobody knows a kind of short proof that always works, and if one existed, a famous open question (NP versus coNP) would be settled in a way most experts doubt.' },
 );
 
 export const LEVELS = RAW.map(lv => ({ ...lv, trivial: trivialBound(lv) }));
