@@ -69,3 +69,30 @@ test('Pairs 3 and 4: the obvious sweeps fall one short', () => {
     }
   }
 });
+
+// Dominoes: the texts lean on the two colours. Level 1 is settled by counting them (8 against 6); from level 2 on
+// the colours are balanced, so counting alone proves nothing and the answer is one below either count.
+test('Dominoes: the colour counts are what the texts say', () => {
+  const count = lv => { const g = gridGraph(lv.rows), n = [0, 0]; for (const v of g.cells) n[(Math.floor(v / g.W) + v % g.W) % 2]++; return n.sort((a, b) => a - b); };
+  const grids = LEVELS.filter(l => l.kind === 'grid');
+  assert.deepEqual(count(grids[0]), [6, 8]);
+  assert.equal(answer(grids[0]), 6);
+  for (const lv of grids.slice(1)) { const [lo, hi] = count(lv); assert.equal(lo, hi, lv.id); assert.equal(answer(lv), lo - 1, lv.id); }
+});
+
+// Pipes 3 says "if your water gets stuck, take a unit off a route": so filling routes without ever taking water
+// back must be able to end short of the best answer (and must also be able to reach it).
+test('Pipes 3: sending water without rerouting can get stuck short of the best', () => {
+  const lv = LEVELS.find(l => l.id === 'w3'), n = lv.pos.length, E = lv.edges, ends = new Set();
+  const paths = [], walk = (v, path) => { if (v === n - 1) { paths.push([...path]); return; } E.forEach(([a, b], i) => { if (a === v && !path.some(j => E[j][0] === b)) { path.push(i); walk(b, path); path.pop(); } }); };
+  walk(0, []);
+  const seen = new Set(), go = (cap, f) => {
+    const key = cap.join(); if (seen.has(key)) return; seen.add(key);
+    const open = paths.filter(p => p.every(i => cap[i] > 0));
+    if (!open.length) { ends.add(f); return; }
+    for (const p of open) { const c = [...cap]; p.forEach(i => c[i]--); go(c, f + 1); }
+  };
+  go(E.map(e => e[2]), 0);
+  const best = answer(lv);
+  assert.ok(ends.has(best) && Math.min(...ends) < best, `w3 can end at ${[...ends]}`);
+});
