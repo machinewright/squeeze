@@ -27,7 +27,8 @@ export function mountPipes(el, lv, st, report) {
     const arrow = svgEl('path', { class: 'arrow', d: `M${mx + ux * ah},${my + uy * ah} L${mx - ux * ah - uy * ah},${my - uy * ah + ux * ah} L${mx - ux * ah + uy * ah},${my - uy * ah - ux * ah}Z` });
     const lx = mx - uy * (wpx / 2 + 11), ly = my + ux * (wpx / 2 + 11);
     const lab = svgEl('text', { x: lx, y: ly, class: 'small' });
-    const cross = svgEl('path', { class: 'cross', d: `M${mx - 8},${my - 8}L${mx + 8},${my + 8}M${mx + 8},${my - 8}L${mx - 8},${my + 8}` });
+    const cx = x1 + (x2 - x1) * 0.3, cy = y1 + (y2 - y1) * 0.3;
+    const cross = svgEl('path', { class: 'cross', d: `M${cx - 8},${cy - 8}L${cx + 8},${cy + 8}M${cx + 8},${cy - 8}L${cx - 8},${cy + 8}` });
     const hit = svgEl('line', { x1, y1, x2, y2, class: 'hit' });
     g.append(shell, water, arrow, lab, cross, hit);
     svg.append(g);
